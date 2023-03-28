@@ -74,6 +74,9 @@ func Start(filename string) {
 	router.Path("/app/{key}").Methods("GET").Handler(
 		websockets.NewWebsocket(inMemoryStorage),
 	)
+	router.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	})
 
 	appsRouter := router.PathPrefix("/apps/{app_id}").Subrouter()
 	appsRouter.Use(
@@ -92,7 +95,7 @@ func Start(filename string) {
 	)
 	appsRouter.Path("/channels/{channel_name}/users").Methods("GET").Handler(
 		api.NewGetChannelUsers(inMemoryStorage),
-	)
+	)	
 
 	if conf.SSL.Enabled {
 		go func() {
