@@ -68,8 +68,10 @@ func Start(filename string) {
 		}
 	}
 
-	router := mux.NewRouter()
-	router.Use(handlers.RecoveryHandler())
+	r := mux.NewRouter()
+	r.Use(handlers.RecoveryHandler())
+
+	router := r.PathPrefix("/ws").Subrouter()
 
 	router.Path("/app/{key}").Methods("GET").Handler(
 		websockets.NewWebsocket(inMemoryStorage),
